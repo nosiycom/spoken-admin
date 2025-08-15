@@ -1,0 +1,51 @@
+{
+  "serviceName": "spoken-service",
+  "cluster": "spoken-cluster",
+  "taskDefinition": "spoken",
+  "desiredCount": 2,
+  "launchType": "FARGATE",
+  "platformVersion": "LATEST",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "subnet-XXXXXXXXX",
+        "subnet-YYYYYYYYY"
+      ],
+      "securityGroups": [
+        "sg-XXXXXXXXX"
+      ],
+      "assignPublicIp": "ENABLED"
+    }
+  },
+  "loadBalancers": [
+    {
+      "targetGroupArn": "arn:aws:elasticloadbalancing:YOUR_REGION:YOUR_ACCOUNT_ID:targetgroup/spoken-tg/XXXXXXXXXXXX",
+      "containerName": "spoken",
+      "containerPort": 3000
+    }
+  ],
+  "serviceRegistries": [],
+  "deploymentController": {
+    "type": "CODE_DEPLOY"
+  },
+  "deploymentConfiguration": {
+    "minimumHealthyPercent": 50,
+    "maximumPercent": 200,
+    "deploymentCircuitBreaker": {
+      "enable": true,
+      "rollback": true
+    }
+  },
+  "enableExecuteCommand": true,
+  "enableLogging": true,
+  "tags": [
+    {
+      "key": "Environment",
+      "value": "production"
+    },
+    {
+      "key": "Application",
+      "value": "spoken"
+    }
+  ]
+}

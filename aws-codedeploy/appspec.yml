@@ -1,0 +1,28 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: <TASK_DEFINITION>
+        LoadBalancerInfo:
+          ContainerName: "spoken"
+          ContainerPort: 3000
+        PlatformVersion: "LATEST"
+
+Hooks:
+  - BeforeInstall:
+      - location: scripts/before_install.sh
+        timeout: 300
+        runas: root
+  - ApplicationStart:
+      - location: scripts/application_start.sh
+        timeout: 300
+        runas: root
+  - ApplicationStop:
+      - location: scripts/application_stop.sh
+        timeout: 300
+        runas: root
+  - ValidateService:
+      - location: scripts/validate_service.sh
+        timeout: 300
+        runas: root

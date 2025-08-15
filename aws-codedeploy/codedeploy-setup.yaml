@@ -1,0 +1,170 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CodeDeploy setup for Spoken ECS Application'
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Default: spoken-app
+    Description: Name of the CodeDeploy application
+  
+  DeploymentGroupName:
+    Type: String
+    Default: spoken-dg
+    Description: Name of the CodeDeploy deployment group
+  
+  ECSClusterName:
+    Type: String
+    Default: spoken-cluster
+    Description: Name of the ECS cluster
+  
+  ECSServiceName:
+    Type: String
+    Default: spoken-service
+    Description: Name of the ECS service
+  
+  LoadBalancerName:
+    Type: String
+    Default: spoken-alb
+    Description: Name of the Application Load Balancer
+
+Resources:
+  # CodeDeploy Application
+  CodeDeployApplication:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ApplicationName: !Ref ApplicationName
+      ComputePlatform: ECS
+
+  # CodeDeploy Service Role
+  CodeDeployServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ApplicationName}-codedeploy-service-role"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codedeploy.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS
+      Policies:
+        - PolicyName: ECSTaskDefinitionAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecs:DescribeServices
+                  - ecs:CreateTaskSet
+                  - ecs:UpdateServicePrimaryTaskSet
+                  - ecs:DeleteTaskSet
+                  - elasticloadbalancing:DescribeTargetGroups
+                  - elasticloadbalancing:DescribeListeners
+                  - elasticloadbalancing:ModifyListener
+                  - elasticloadbalancing:DescribeRules
+                  - elasticloadbalancing:ModifyRule
+                  - lambda:InvokeFunction
+                  - cloudwatch:DescribeAlarms
+                  - sns:Publish
+                  - s3:GetObject
+                Resource: '*'
+
+  # CodeDeploy Deployment Group
+  CodeDeployDeploymentGroup:
+    Type: AWS::CodeDeploy::DeploymentGroup
+    Properties:
+      ApplicationName: !Ref CodeDeployApplication
+      DeploymentGroupName: !Ref DeploymentGroupName
+      ServiceRoleArn: !GetAtt CodeDeployServiceRole.Arn
+      DeploymentConfigName: CodeDeployDefault.ECSAllAtOnceBlueGreen
+      BlueGreenDeploymentConfiguration:
+        TerminateBlueInstancesOnDeploymentSuccess:
+          Action: TERMINATE
+          TerminationWaitTimeInMinutes: 5
+        DeploymentReadyOption:
+          ActionOnTimeout: CONTINUE_DEPLOYMENT
+        GreenFleetProvisioningOption:
+          Action: COPY_AUTO_SCALING_GROUP
+      ECSServices:
+        - ServiceName: !Ref ECSServiceName
+          ClusterName: !Ref ECSClusterName
+      LoadBalancerInfo:
+        TargetGroupInfoList:
+          - Name: !Sub "${ApplicationName}-tg"
+      AutoRollbackConfiguration:
+        Enabled: true
+        Events:
+          - DEPLOYMENT_FAILURE
+          - DEPLOYMENT_STOP_ON_ALARM
+          - DEPLOYMENT_STOP_ON_REQUEST
+
+  # CloudWatch Alarm for deployment monitoring
+  DeploymentFailureAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${ApplicationName}-deployment-failure"
+      AlarmDescription: Alarm for monitoring deployment failures
+      MetricName: UnHealthyHosts
+      Namespace: AWS/ApplicationELB
+      Statistic: Average
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !Ref LoadBalancerName
+      TreatMissingData: notBreaching
+
+  # SNS Topic for deployment notifications
+  DeploymentNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${ApplicationName}-deployments"
+      DisplayName: Spoken Deployments
+
+  # CloudWatch Event Rule for deployment state changes
+  DeploymentStateChangeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "${ApplicationName}-deployment-state-change"
+      Description: Capture deployment state changes
+      EventPattern:
+        source:
+          - aws.codedeploy
+        detail-type:
+          - CodeDeploy Deployment State-change Notification
+        detail:
+          application:
+            - !Ref CodeDeployApplication
+      State: ENABLED
+      Targets:
+        - Arn: !Ref DeploymentNotificationTopic
+          Id: DeploymentNotificationTarget
+
+Outputs:
+  CodeDeployApplicationName:
+    Description: Name of the CodeDeploy application
+    Value: !Ref CodeDeployApplication
+    Export:
+      Name: !Sub "${AWS::StackName}-ApplicationName"
+
+  CodeDeployDeploymentGroupName:
+    Description: Name of the CodeDeploy deployment group
+    Value: !Ref CodeDeployDeploymentGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-DeploymentGroupName"
+
+  CodeDeployServiceRoleArn:
+    Description: ARN of the CodeDeploy service role
+    Value: !GetAtt CodeDeployServiceRole.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-ServiceRoleArn"
+
+  NotificationTopicArn:
+    Description: ARN of the SNS topic for deployment notifications
+    Value: !Ref DeploymentNotificationTopic
+    Export:
+      Name: !Sub "${AWS::StackName}-NotificationTopicArn"
