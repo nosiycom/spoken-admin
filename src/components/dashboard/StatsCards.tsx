@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Stats {
   totalContent: number;
@@ -62,30 +63,27 @@ export function StatsCards() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => (
         <div
           key={index}
-          className="bg-white overflow-hidden shadow rounded-lg"
+          className="rounded-lg bg-white px-6 py-4 shadow ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
         >
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`${card.bgColor} rounded-md p-3`}>
-                  <span className="text-white text-2xl">{card.icon}</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    {card.title}
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {card.value.toLocaleString()}
-                  </dd>
-                </dl>
-              </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm/6 font-medium text-gray-600 dark:text-gray-400">
+                {card.title}
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {card.value.toLocaleString()}
+              </p>
             </div>
+            <div className="text-2xl">{card.icon}</div>
+          </div>
+          <div className="mt-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              +20.1% from last month
+            </p>
           </div>
         </div>
       ))}

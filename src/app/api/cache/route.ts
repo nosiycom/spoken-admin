@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { getServerUser } from '@/lib/auth';
 import { CacheService } from '@/lib/redis';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -48,8 +48,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

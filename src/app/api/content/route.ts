@@ -1,46 +1,54 @@
 import { NextRequest } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { Content } from '@/models/Content';
+import { getServerUser } from '@/lib/auth';
+import { CourseService } from '@/lib/services/courses';
 import { CacheService } from '@/lib/redis';
+import type { CourseInsert } from '@/types/database';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get('type');
     const level = searchParams.get('level');
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
 
-    const cacheKey = `content:${type || 'all'}:${level || 'all'}:${status || 'all'}:${page}:${limit}`;
+    const cacheKey = `content:${level || 'all'}:${status || 'all'}:${page}:${limit}`;
     const cached = await CacheService.getJSON(cacheKey);
     
     if (cached) {
       return Response.json(cached);
     }
 
-    await connectToDatabase();
+    const courseService = new CourseService();
+    let courses;
 
-    const query: any = {};
-    if (type && type !== 'all') query.type = type;
-    if (level && level !== 'all') query.level = level;
-    if (status && status !== 'all') query.status = status;
+    if (level && level !== 'all') {
+      courses = await courseService.getCoursesByLevel(level as 'beginner' | 'intermediate' | 'advanced');
+    } else {
+      courses = await courseService.getAllCourses(true); // Include unpublished for admin
+    }
 
-    const content = await Content.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip((page - 1) * limit);
+    // Apply status filtering
+    if (status && status !== 'all') {
+      if (status === 'published') {
+        courses = courses.filter(course => course.is_published);
+      } else if (status === 'draft') {
+        courses = courses.filter(course => !course.is_published);
+      }
+    }
 
-    const total = await Content.countDocuments(query);
+    // Apply pagination
+    const total = courses.length;
+    const startIndex = (page - 1) * limit;
+    const paginatedCourses = courses.slice(startIndex, startIndex + limit);
 
     const result = {
-      content,
+      content: paginatedCourses,
       pagination: {
         page,
         limit,
@@ -61,43 +69,36 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { title, description, type, level, category, content, metadata, status } = body;
+    const { title, description, level, category, estimated_duration_hours, status } = body;
 
-    if (!title || !type || !level || !category || !content) {
+    if (!title || !level || !category) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    await connectToDatabase();
+    const courseService = new CourseService();
 
-    const newContent = new Content({
+    const courseData: CourseInsert = {
       title,
       description,
-      type,
       level,
       category,
-      content,
-      metadata: {
-        difficulty: metadata?.difficulty || 5,
-        tags: metadata?.tags || [],
-        duration: metadata?.duration,
-        prerequisites: metadata?.prerequisites || [],
-      },
-      status: status || 'draft',
-      createdBy: userId,
-    });
+      estimated_duration_hours: estimated_duration_hours || 1,
+      is_published: status === 'published',
+      created_by: user.id,
+    };
 
-    await newContent.save();
+    const newCourse = await courseService.createCourse(courseData);
 
     // Invalidate content cache
     await CacheService.invalidatePattern('content:*');
 
-    return Response.json({ content: newContent, message: 'Content created successfully' });
+    return Response.json({ content: newCourse, message: 'Content created successfully' });
   } catch (error) {
     console.error('Content creation error:', error);
     return Response.json({ error: 'Failed to create content' }, { status: 500 });

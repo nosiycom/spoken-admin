@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { createSupabaseAdminClient } from '@/lib/supabase';
 import redis from '@/lib/redis';
 
 export async function GET(req: NextRequest) {
@@ -13,8 +13,10 @@ export async function GET(req: NextRequest) {
   };
 
   try {
-    // Check MongoDB connection
-    await connectToDatabase();
+    // Check Supabase connection
+    const supabase = createSupabaseAdminClient();
+    const { data, error } = await supabase.from('users').select('id').limit(1);
+    if (error) throw error;
     healthCheck.services.database = 'healthy';
   } catch (error) {
     healthCheck.services.database = 'unhealthy';

@@ -29,16 +29,16 @@
       ],
       "secrets": [
         {
-          "name": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
-          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/clerk:publishable_key::"
+          "name": "NEXT_PUBLIC_SUPABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/supabase:url::"
         },
         {
-          "name": "CLERK_SECRET_KEY",
-          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/clerk:secret_key::"
+          "name": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/supabase:anon_key::"
         },
         {
-          "name": "MONGODB_URI",
-          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/mongodb:uri::"
+          "name": "SUPABASE_SERVICE_ROLE_KEY",
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:spoken/supabase:service_role_key::"
         },
         {
           "name": "REDIS_URL",

@@ -1,6 +1,6 @@
 # Spoken
 
-A comprehensive admin portal for managing AI-powered French learning mobile app content, built with Next.js, Clerk authentication, MongoDB, Redis caching, and PostHog analytics.
+A comprehensive admin portal for managing AI-powered French learning mobile app content, built with Next.js, Clerk authentication, Supabase (PostgreSQL), Redis caching, and PostHog analytics.
 
 ## 🚀 Features
 
@@ -17,7 +17,7 @@ A comprehensive admin portal for managing AI-powered French learning mobile app 
 
 - **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
 - **Authentication**: Clerk
-- **Database**: MongoDB with Mongoose
+- **Database**: Supabase (PostgreSQL) with Row Level Security
 - **Caching**: Redis (Supabase)
 - **Analytics**: PostHog
 - **Deployment**: AWS ECS + Fargate

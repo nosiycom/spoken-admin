@@ -1,0 +1,221 @@
+[
+  {
+    "title": "French Pronouns - Les Pronoms",
+    "description": "Learn personal pronouns in French including je, tu, il, elle, nous, vous, ils, elles with practical examples and exercises.",
+    "type": "lesson",
+    "level": "beginner",
+    "category": "Grammar",
+    "content": {
+      "text": "<h2>Personal Pronouns in French</h2><p>French personal pronouns replace nouns to avoid repetition...</p>",
+      "audio": "https://example.com/audio/pronouns-lesson.mp3",
+      "images": ["https://example.com/images/pronoun-chart.png"],
+      "vocabulary": [
+        {
+          "french": "je",
+          "english": "I",
+          "pronunciation": "/ʒə/",
+          "example": "Je mange une pomme."
+        },
+        {
+          "french": "tu",
+          "english": "you (informal)",
+          "pronunciation": "/ty/",
+          "example": "Tu parles français."
+        },
+        {
+          "french": "il",
+          "english": "he/it",
+          "pronunciation": "/il/",
+          "example": "Il est médecin."
+        }
+      ]
+    },
+    "metadata": {
+      "difficulty": 3,
+      "estimatedDuration": 20,
+      "tags": ["pronouns", "grammar", "basic"],
+      "prerequisites": [],
+      "objectives": [
+        "Identify all personal pronouns",
+        "Use pronouns correctly in sentences",
+        "Understand formal vs informal 'you'"
+      ]
+    },
+    "status": "published",
+    "createdBy": "user_123",
+    "views": 245,
+    "completionRate": 78,
+    "publishedAt": "2024-01-15T10:00:00Z"
+  },
+  
+  {
+    "title": "Pronunciation Quiz - Silent Letters",
+    "description": "Test your knowledge of French silent letters and pronunciation rules with interactive exercises.",
+    "type": "quiz",
+    "level": "intermediate",
+    "category": "Pronunciation",
+    "content": {
+      "text": "<p>French has many silent letters. Test your pronunciation skills!</p>",
+      "exercises": [
+        {
+          "question": "Which letter is silent in 'temps'?",
+          "type": "multiple-choice",
+          "options": ["t", "e", "m", "s"],
+          "correctAnswer": "s",
+          "explanation": "The 's' at the end of 'temps' is silent. It's pronounced /tɑ̃/."
+        },
+        {
+          "question": "Complete: The 'h' in 'heure' is ___",
+          "type": "fill-blank",
+          "correctAnswer": "silent",
+          "explanation": "The 'h' in French is almost always silent."
+        }
+      ]
+    },
+    "metadata": {
+      "difficulty": 6,
+      "estimatedDuration": 15,
+      "tags": ["pronunciation", "silent-letters", "phonetics"],
+      "prerequisites": ["basic-pronunciation-rules"],
+      "objectives": [
+        "Identify silent letters in French words",
+        "Apply pronunciation rules accurately"
+      ]
+    },
+    "status": "published",
+    "createdBy": "user_456",
+    "views": 132,
+    "completionRate": 65,
+    "publishedAt": "2024-02-01T14:30:00Z"
+  },
+  
+  {
+    "title": "Restaurant Conversation Practice",
+    "description": "Practice ordering food, asking for the bill, and polite restaurant interactions in French.",
+    "type": "exercise",
+    "level": "intermediate",
+    "category": "Conversation",
+    "content": {
+      "text": "<h2>Au Restaurant</h2><p>Practice common restaurant phrases and interactions...</p>",
+      "audio": "https://example.com/audio/restaurant-conversation.mp3",
+      "video": "https://example.com/video/restaurant-scene.mp4",
+      "exercises": [
+        {
+          "question": "How do you say 'I would like to order' in French?",
+          "type": "pronunciation",
+          "correctAnswer": "Je voudrais commander",
+          "explanation": "This is the polite way to indicate you're ready to order."
+        }
+      ],
+      "vocabulary": [
+        {
+          "french": "la carte",
+          "english": "the menu",
+          "pronunciation": "/la kaʁt/",
+          "example": "Puis-je voir la carte, s'il vous plaît?"
+        },
+        {
+          "french": "l'addition",
+          "english": "the bill",
+          "pronunciation": "/la.di.sjɔ̃/",
+          "example": "L'addition, s'il vous plaît."
+        }
+      ]
+    },
+    "metadata": {
+      "difficulty": 5,
+      "estimatedDuration": 25,
+      "tags": ["conversation", "restaurant", "practical", "food"],
+      "prerequisites": ["basic-politeness", "food-vocabulary"],
+      "objectives": [
+        "Order food confidently in French",
+        "Handle restaurant interactions",
+        "Use polite expressions appropriately"
+      ]
+    },
+    "status": "published",
+    "createdBy": "user_789",
+    "views": 89,
+    "completionRate": 82,
+    "publishedAt": "2024-02-10T09:15:00Z"
+  },
+  
+  {
+    "title": "Advanced Subjunctive Mood",
+    "description": "Master the French subjunctive mood with complex sentence structures and nuanced expressions.",
+    "type": "lesson",
+    "level": "advanced",
+    "category": "Grammar",
+    "content": {
+      "text": "<h2>Le Subjonctif</h2><p>The subjunctive mood expresses doubt, emotion, necessity...</p>",
+      "images": ["https://example.com/images/subjunctive-chart.png"]
+    },
+    "metadata": {
+      "difficulty": 9,
+      "estimatedDuration": 45,
+      "tags": ["subjunctive", "advanced-grammar", "moods"],
+      "prerequisites": ["present-tense", "past-tense", "conditional"],
+      "objectives": [
+        "Recognize when to use subjunctive",
+        "Form subjunctive correctly",
+        "Use in complex sentence structures"
+      ]
+    },
+    "status": "draft",
+    "createdBy": "user_123",
+    "views": 0,
+    "completionRate": 0
+  },
+  
+  {
+    "title": "Colors and Adjectives",
+    "description": "Learn French color vocabulary and how adjectives agree with nouns in gender and number.",
+    "type": "vocabulary",
+    "level": "beginner",
+    "category": "Vocabulary",
+    "content": {
+      "vocabulary": [
+        {
+          "french": "rouge",
+          "english": "red",
+          "pronunciation": "/ʁuʒ/",
+          "example": "Une voiture rouge (a red car)"
+        },
+        {
+          "french": "bleu/bleue",
+          "english": "blue",
+          "pronunciation": "/blø/",
+          "example": "Un ciel bleu, une robe bleue"
+        },
+        {
+          "french": "vert/verte",
+          "english": "green",
+          "pronunciation": "/vɛʁ/",
+          "example": "Un parc vert, une plante verte"
+        },
+        {
+          "french": "jaune",
+          "english": "yellow",
+          "pronunciation": "/ʒon/",
+          "example": "Le soleil jaune"
+        }
+      ]
+    },
+    "metadata": {
+      "difficulty": 2,
+      "estimatedDuration": 15,
+      "tags": ["colors", "adjectives", "vocabulary", "agreement"],
+      "prerequisites": [],
+      "objectives": [
+        "Learn basic color vocabulary",
+        "Understand adjective agreement",
+        "Use colors to describe objects"
+      ]
+    },
+    "status": "published",
+    "createdBy": "user_456",
+    "views": 178,
+    "completionRate": 91,
+    "publishedAt": "2024-01-20T16:45:00Z"
+  }
+]

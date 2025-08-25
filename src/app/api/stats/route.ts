@@ -1,15 +1,14 @@
 import { NextRequest } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { Content } from '@/models/Content';
-import { User } from '@/models/User';
-import { Analytics } from '@/models/Analytics';
+import { getServerUser } from '@/lib/auth';
+import { CourseService } from '@/lib/services/courses';
+import { UserService } from '@/lib/services/users';
+import { createSupabaseAdminClient } from '@/lib/supabase';
 import { CacheService } from '@/lib/redis';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getServerUser();
+    if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -20,35 +19,43 @@ export async function GET(req: NextRequest) {
       return Response.json(cached);
     }
 
-    await connectToDatabase();
+    const courseService = new CourseService();
+    const userService = new UserService();
+    const supabase = createSupabaseAdminClient();
 
-    // Get content stats
-    const totalContent = await Content.countDocuments();
-    const publishedContent = await Content.countDocuments({ status: 'published' });
+    // Get content stats (courses)
+    const allCourses = await courseService.getAllCourses(true);
+    const totalContent = allCourses.length;
+    const publishedContent = allCourses.filter(course => course.is_published).length;
 
     // Get user stats
-    const totalUsers = await User.countDocuments();
+    const allUsers = await userService.getAllUsers();
+    const totalUsers = allUsers.length;
     
-    // Get active users (users who logged in within last 30 days)
+    // Get active users (users who were active within last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const activeUsers = await User.countDocuments({
-      lastLogin: { $gte: thirtyDaysAgo }
-    });
+    const activeUsers = allUsers.filter(user => {
+      const lastActivity = new Date(user.last_activity_at);
+      return lastActivity >= thirtyDaysAgo;
+    }).length;
 
-    // Get recent analytics
+    // Get recent lesson completions as events
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentEvents = await Analytics.countDocuments({
-      timestamp: { $gte: sevenDaysAgo }
-    });
+    
+    const { count: recentEvents } = await supabase
+      .from('user_lesson_progress')
+      .select('*', { count: 'exact', head: true })
+      .gte('completed_at', sevenDaysAgo.toISOString())
+      .not('completed_at', 'is', null);
 
     const stats = {
       totalContent,
       publishedContent,
       totalUsers,
       activeUsers,
-      recentEvents,
+      recentEvents: recentEvents || 0,
     };
 
     // Cache for 10 minutes

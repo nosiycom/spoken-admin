@@ -1,11 +1,12 @@
 'use client';
 
-import { UserButton, useUser } from '@clerk/nextjs';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { trackEvent } from '@/lib/analytics';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 export function DashboardHeader() {
-  const { user } = useUser();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -29,20 +30,20 @@ export function DashboardHeader() {
           <div className="flex items-center space-x-4">
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">
-                {user?.firstName} {user?.lastName}
+                {user?.user_metadata?.first_name} {user?.user_metadata?.last_name}
               </p>
               <p className="text-sm text-gray-500">
                 Admin
               </p>
             </div>
-            <UserButton 
-              appearance={{
-                elements: {
-                  avatarBox: "h-10 w-10"
-                }
-              }}
-              showName={false}
-            />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={signOut}
+              className="transition-all duration-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-700 dark:hover:text-red-300 active:scale-95"
+            >
+              Sign Out
+            </Button>
           </div>
         </div>
       </div>
