@@ -94,10 +94,6 @@ export default async function Home() {
                   View dashboard 
                   <span aria-hidden="true" className="group-hover:translate-x-1 transition-transform duration-200">→</span>
                 </Link>
-                <Link href="/auth-test" className="group inline-flex items-center gap-x-2 text-sm font-semibold leading-6 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Auth Test 
-                  <span aria-hidden="true" className="group-hover:translate-x-1 transition-transform duration-200">🧪</span>
-                </Link>
               </div>
             </div>
           </div>
