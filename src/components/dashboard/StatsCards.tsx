@@ -66,7 +66,7 @@ export function StatsCards() {
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => (
         <div
-          key={index}
+          key={card.title}
           className="rounded-lg bg-white px-6 py-4 shadow ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
         >
           <div className="flex items-center justify-between">

@@ -115,10 +115,14 @@ export function ContentManagement() {
                   </p>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="text-indigo-600 hover:text-indigo-500 text-sm">
+                  <button 
+                    className="text-indigo-600 hover:text-indigo-500 text-sm"
+                  >
                     Edit
                   </button>
-                  <button className="text-red-600 hover:text-red-500 text-sm">
+                  <button 
+                    className="text-red-600 hover:text-red-500 text-sm"
+                  >
                     Delete
                   </button>
                 </div>

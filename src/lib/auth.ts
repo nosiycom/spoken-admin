@@ -7,17 +7,16 @@ export async function getServerUser() {
     const { data: { user }, error } = await supabase.auth.getUser()
     
     if (error) {
-      // Don't log errors for unauthenticated users
-      if (error.message !== 'Auth session missing!') {
-        console.error('Error getting server user:', error)
+      // Don't log errors for expected auth states
+      if (error.message !== 'Auth session missing!' && error.message !== 'JWT expired' && !error.message.includes('Invalid JWT')) {
+        console.error('Error getting server user:', error.message)
       }
       return null
     }
     
     return user
   } catch (error) {
-    // Don't log errors for unauthenticated users
-    console.log('Auth check failed:', error)
+    // Don't log errors for expected auth states - users not being logged in is normal
     return null
   }
 }

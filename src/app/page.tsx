@@ -31,8 +31,8 @@ export default async function Home() {
       redirect('/dashboard');
     }
   } catch (error) {
-    console.log('Auth check failed, continuing to home page:', error)
-    // Continue to render home page if auth check fails
+    // Auth check failed - this is normal for unauthenticated users
+    // Continue to render home page
   }
 
   return (

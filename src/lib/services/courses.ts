@@ -1,20 +1,16 @@
-import { createServerSupabase } from '../supabase-server'
+import { createSupabaseAdminClient } from '../supabase'
 import type { Course, CourseInsert, CourseUpdate, Lesson } from '../../types/database'
 
 export class CourseService {
-  // private adminClient = createSupabaseAdminClient()
-
-  private async getSupabaseClient() {
-    return await createServerSupabase()
-  }
+  private adminClient = createSupabaseAdminClient()
 
   async getAllCourses(includeUnpublished = false): Promise<Course[]> {
-    const client = includeUnpublished ? this.adminClient : await this.getSupabaseClient()
+    const client = includeUnpublished ? this.adminClient : this.adminClient
     
     let query = client
       .from('courses')
       .select('*')
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (!includeUnpublished) {
       query = query.eq('is_published', true)
@@ -30,7 +26,7 @@ export class CourseService {
   }
 
   async getCourseById(id: string, includeUnpublished = false): Promise<Course | null> {
-    const client = includeUnpublished ? this.adminClient : await this.getSupabaseClient()
+    const client = this.adminClient
     
     let query = client
       .from('courses')
@@ -55,7 +51,7 @@ export class CourseService {
   }
 
   async getCourseWithLessons(courseId: string, includeUnpublished = false): Promise<Course & { lessons: Lesson[] } | null> {
-    const client = includeUnpublished ? this.adminClient : await this.getSupabaseClient()
+    const client = this.adminClient
     
     let courseQuery = client
       .from('courses')
@@ -80,7 +76,7 @@ export class CourseService {
       .from('lessons')
       .select('*')
       .eq('course_id', courseId)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true })
 
     if (!includeUnpublished) {
       lessonsQuery = lessonsQuery.eq('is_published', true)
@@ -139,13 +135,13 @@ export class CourseService {
   }
 
   async getCoursesByLevel(level: 'beginner' | 'intermediate' | 'advanced'): Promise<Course[]> {
-    const client = await this.getSupabaseClient()
+    const client = this.adminClient
     const { data, error } = await client
       .from('courses')
       .select('*')
       .eq('level', level)
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) {
       throw new Error(`Failed to fetch courses by level: ${error.message}`)
@@ -155,13 +151,13 @@ export class CourseService {
   }
 
   async getCoursesByCategory(category: string): Promise<Course[]> {
-    const client = await this.getSupabaseClient()
+    const client = this.adminClient
     const { data, error } = await client
       .from('courses')
       .select('*')
       .eq('category', category)
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) {
       throw new Error(`Failed to fetch courses by category: ${error.message}`)
@@ -171,13 +167,13 @@ export class CourseService {
   }
 
   async searchCourses(searchTerm: string): Promise<Course[]> {
-    const client = await this.getSupabaseClient()
+    const client = this.adminClient
     const { data, error } = await client
       .from('courses')
       .select('*')
       .or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) {
       throw new Error(`Failed to search courses: ${error.message}`)

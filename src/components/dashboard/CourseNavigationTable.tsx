@@ -240,7 +240,7 @@ export function CourseNavigationTable() {
                   {new Date(course.updatedAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                  <div key={`actions-${course._id}`} className="flex justify-end gap-2">
                     <Button variant="ghost" size="sm">
                       Edit
                     </Button>

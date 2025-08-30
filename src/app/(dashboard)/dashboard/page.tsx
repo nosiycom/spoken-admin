@@ -1,4 +1,8 @@
 import { requireAuth } from '@/lib/auth';
+import { StatsCards } from '@/components/dashboard/StatsCards';
+import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
+import { ContentManagement } from '@/components/dashboard/ContentManagement';
+import { CourseNavigationTable } from '@/components/dashboard/CourseNavigationTable';
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +17,30 @@ export default async function DashboardPage() {
         <p className="text-gray-600 dark:text-gray-400">Welcome to your Spoken Admin Portal</p>
       </div>
 
-      {/* Cards */}
+      {/* Statistics Cards */}
+      <div className="mb-8">
+        <StatsCards />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Analytics Dashboard */}
+        <div>
+          <AnalyticsDashboard />
+        </div>
+
+        {/* Content Management */}
+        <div>
+          <ContentManagement />
+        </div>
+      </div>
+
+      {/* Course Navigation Table */}
+      <div className="mb-8">
+        <CourseNavigationTable />
+      </div>
+
+      {/* Quick Stats Cards */}
       <div className="grid grid-cols-12 gap-6">
         {/* Total Courses */}
         <div className="col-span-full sm:col-span-6 xl:col-span-3 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
